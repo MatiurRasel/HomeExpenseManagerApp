@@ -1,15 +1,46 @@
-<div class="month-data black-border">
+<div class="month-data">
     <div class="month-name">
-        <span>January</span>
+        <span>{{month.monthNumber | numberToMonth}}  {{month.monthYear}}</span>
     </div>
     <div class="month-tables">
-        <app-table class="black-border table-earnings"></app-table>
-
-        <app-table class="black-border table-expenditure"></app-table>
+        <app-table *ngFor="let table of month.tables" [table]="table" 
+        [monthYear]="month.monthYear" [monthNumber]="month.monthNumber"></app-table>
     </div>
 
 </div>
 
-<div class="month-calculations black-border">
-    Calculations
+<div class="month-calculations">
+    <div class="card previous-savings">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item text-light bg-secondary">
+                Previous Savings
+            </li>
+            <li class="list-group-item">1000 TK</li>
+        </ul>
+    </div>
+    <div class="card current-earnings">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item text-light bg-success">
+                Current Earnings
+            </li>
+            <li class="list-group-item">1000 TK</li>
+        </ul>
+    </div>
+    <div class="card current-expenditures">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item text-light bg-danger">
+                Current Expenditures
+            </li>
+            <li class="list-group-item">1000 TK</li>
+        </ul>
+    </div>
+    <div class="card current-savings">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item text-light bg-primary">
+                Current Savings
+            </li>
+            <li class="list-group-item">1000 TK</li>
+        </ul>
+    </div>
+    
 </div>
