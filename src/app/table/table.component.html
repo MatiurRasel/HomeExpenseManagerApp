@@ -10,7 +10,8 @@
         <tr [formGroup]="addRowForm">
             <td>
                 <button class="btn btn-outline-primary btn-sm btn-table"
-                [disabled]="RowForm.status === 'INVALID'">Add Row</button>
+                [disabled]="RowForm.status === 'INVALID'"
+                (click)="addNewRow()">Add Row</button>
             </td>
             <td>
                 <input type="text" class="form-control" formControlName="date"
@@ -31,7 +32,8 @@
                     <button class="btn btn-outline-success btn-sm">
                         Edit
                     </button>
-                    <button class="btn btn-outline-danger btn-sm">
+                    <button class="btn btn-outline-danger btn-sm"
+                    (click)="deleteRow(row.id)">
                         Delete
                     </button>
                 </div>

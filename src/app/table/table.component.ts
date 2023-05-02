@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Table } from '../models/models';
+import { Table, TableRow } from '../models/models';
 import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { TableDataSourceService } from '../services/table-data-source.service';
 
 @Component({
   selector: 'app-table',
@@ -15,7 +16,7 @@ export class TableComponent implements OnInit {
 
   addRowForm: FormGroup;
 
-  constructor() {
+  constructor(private dataSource: TableDataSourceService) {
     this.table = {
       tableName:'',
       columns:[],
@@ -30,6 +31,17 @@ export class TableComponent implements OnInit {
 
 
   ngOnInit(): void {
+    // Getting all the rows of this table when this table is LOCATION_INITIALIZED.
+    this.dataSource.getTableRows(this.monthYear,this.monthNumber,this.table.tableName)
+    .subscribe((res) => {
+      for(let row of res) {
+        this.addRowToArray(row.id,row.data,row.name,row.amount,true);
+      }
+
+    });
+
+
+
     this.addRowForm =  new FormGroup({
       date: new FormControl('',[Validators.required,
         Validators.pattern('[0-9]*'),
@@ -41,8 +53,59 @@ export class TableComponent implements OnInit {
     });
   }
 
-  addRowToArray() {
+  addNewRow() {
+    let date = this.dateControl.value;
+    let name = this.dateControl.value;
+    let amount = this.dateControl.value;
 
+    let monthDataForBackEnd = {
+      monthYear: this.monthYear,
+      monthNumber: this.monthNumber,
+      tableName: this.table.tableName,
+      date:date,
+      name:name,
+      amount:amount,
+    };
+    this.dataSource.postTableRow(monthDataForBackEnd).subscribe((res) => {
+      this.addRowToArray(parseInt(res),date,name,amount,true);
+    });
+  }
+
+  addRowToArray ( 
+    id: number,
+    date: string,
+    name: string,
+    amount: string,
+    isSaved: boolean
+    ) {
+      let row: TableRow = {
+        id:id,
+        date:date,
+        name:name,
+        amount:amount, 
+        isSaved:isSaved,
+      };
+      this.table.rows.push(row);
+      this.clearForm();
+
+  }
+   
+  deleteRow(id: number | undefined) {
+    this.table.rows.forEach((row, index) => {
+      if(id && row.id === id) {
+        this.dataSource.deleteTableRow(row.id).subscribe((res) => {
+          this.table.rows.splice(index,1);
+        });
+      }
+
+    });
+
+  }
+
+  clearForm() {
+    this.dateControl.setValue('');
+    this.nameControl.setValue('');
+    this.amountControl.setValue('');
   }
 
   // GETTER TO ACCESS FORM ELEMENTS AND FORM ITSELF
