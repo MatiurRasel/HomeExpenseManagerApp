@@ -41,6 +41,10 @@ export class TableComponent implements OnInit {
     });
   }
 
+  addRowToArray() {
+
+  }
+
   // GETTER TO ACCESS FORM ELEMENTS AND FORM ITSELF
   public get dateControl(): FormControl {
     return this.addRowForm.controls['date'] as FormControl;
@@ -79,6 +83,7 @@ function daysInMonthValidator(
     return null;
   };
 }
+
 
 function getDaysInMonth(monthYear: string,monthNumber: string) : number {
   return new Date(parseInt(monthYear),parseInt(monthNumber),0).getDate();
