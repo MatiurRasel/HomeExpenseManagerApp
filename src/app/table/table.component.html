@@ -29,7 +29,8 @@
         <tr *ngFor="let row of table.rows">
             <td>
                 <div class="btn-group btn-table">
-                    <button class="btn btn-outline-success btn-sm">
+                    <button class="btn btn-outline-success btn-sm"
+                    (click)="editRow(row.id)">
                         Edit
                     </button>
                     <button class="btn btn-outline-danger btn-sm"

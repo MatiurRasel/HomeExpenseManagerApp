@@ -26,3 +26,8 @@ export class Month {
     calculation: MonthCalculation[]=[];
     isSaved:boolean=false;
 }
+
+export class MonthNavigation {
+    monthNumber: string = '';
+    monthYear: string = '';
+}

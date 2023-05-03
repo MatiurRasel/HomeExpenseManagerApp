@@ -32,10 +32,13 @@ export class TableComponent implements OnInit {
 
   ngOnInit(): void {
     // Getting all the rows of this table when this table is LOCATION_INITIALIZED.
-    this.dataSource.getTableRows(this.monthYear,this.monthNumber,this.table.tableName)
+    // alert(this.table.tableName);
+    this.dataSource
+    .getTableRows(this.monthYear,this.monthNumber,this.table.tableName)
     .subscribe((res) => {
+      this.table.rows = [];
       for(let row of res) {
-        this.addRowToArray(row.id,row.data,row.name,row.amount,true);
+        this.addRowToArray(row.id,row.date,row.name,row.amount,true);
       }
 
     });
@@ -55,9 +58,10 @@ export class TableComponent implements OnInit {
 
   addNewRow() {
     let date = this.dateControl.value;
-    let name = this.dateControl.value;
-    let amount = this.dateControl.value;
+    let name = this.nameControl.value;
+    let amount = this.amountControl.value;
 
+    //alert(date +'-'+ name +'-'+ amount);
     let monthDataForBackEnd = {
       monthYear: this.monthYear,
       monthNumber: this.monthNumber,
@@ -89,7 +93,30 @@ export class TableComponent implements OnInit {
       this.clearForm();
 
   }
+  
+  editRow(rowId: number | undefined) {
+    if(
+      this.dateControl.value === '' &&
+      this.nameControl.value === '' &&
+      this.amountControl.value === ''
+    ){
+      this.table.rows.forEach((row, index) => {
+        if(rowId && row.id === rowId) {
+          this.dateControl.setValue(row.date);
+          this.nameControl.setValue(row.name);
+          this.amountControl.setValue(row.amount);
+          this.deleteRow(row.id);
+        }
    
+      });
+    }
+    else {
+      alert('First Add Pending Row Data');
+    }
+    
+  }
+
+
   deleteRow(id: number | undefined) {
     this.table.rows.forEach((row, index) => {
       if(id && row.id === id) {

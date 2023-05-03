@@ -1,11 +1,19 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
+import { MonthNavigation } from '../models/models';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TableDataSourceService {
+  monthNavigationObservable = new Subject<MonthNavigation[]>();
+  monthNavigationSelectedObservable = new Subject<MonthNavigation>();
+
   baseUrl = "https://localhost:7017/api/MonthsData/";
+  
+
+
   constructor(private http: HttpClient) { }
 
   // Back End Requests
@@ -14,6 +22,7 @@ export class TableDataSourceService {
   }
 
   getTableRows(monthYear: string,monthNumber: string,tableName: string) {
+    // alert(tableName);
     let parameters = new HttpParams();
     parameters = parameters.append('monthYear',monthYear);
     parameters = parameters.append('monthNumber',monthNumber);
@@ -24,7 +33,8 @@ export class TableDataSourceService {
   }
 
   postTableRow(monthDataForBackEnd: any) {
-    return this.http.post(this.baseUrl + 'InsertTableRow',monthDataForBackEnd,
+    return this.http.post(this.baseUrl + 'InsertTableRow',
+    monthDataForBackEnd,
     {responseType: 'text'}
     );
   }
