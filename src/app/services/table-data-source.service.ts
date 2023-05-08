@@ -10,6 +10,17 @@ export class TableDataSourceService {
   monthNavigationObservable = new Subject<MonthNavigation[]>();
   monthNavigationSelectedObservable = new Subject<MonthNavigation>();
 
+  previousSavingsObservable =  new Subject<{
+    monthYear: string;
+    monthNumber: string;
+    sum: string;
+  }>();
+
+  currentSavingsRequestObservable = new Subject<{
+    monthYear: string;
+    monthNumber: string;
+  }>();
+
   baseUrl = "https://localhost:7017/api/MonthsData/";
   
 

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Table, TableRow } from '../models/models';
 import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { TableDataSourceService } from '../services/table-data-source.service';
@@ -13,6 +13,7 @@ export class TableComponent implements OnInit {
   @Input() table: Table; 
   @Input() monthNumber: string;
   @Input() monthYear: string;
+  @Output() sumUpdated = new EventEmitter<number>();
 
   addRowForm: FormGroup;
 
@@ -90,6 +91,7 @@ export class TableComponent implements OnInit {
         isSaved:isSaved,
       };
       this.table.rows.push(row);
+      this.updateTheSum();
       this.clearForm();
 
   }
@@ -133,6 +135,14 @@ export class TableComponent implements OnInit {
     this.dateControl.setValue('');
     this.nameControl.setValue('');
     this.amountControl.setValue('');
+  }
+
+  updateTheSum() {
+    let sum = 0;
+    this.table.rows.forEach((row,index) => {
+      sum += parseInt(row.amount);
+    });
+    this.sumUpdated.emit(sum);
   }
 
   // GETTER TO ACCESS FORM ELEMENTS AND FORM ITSELF

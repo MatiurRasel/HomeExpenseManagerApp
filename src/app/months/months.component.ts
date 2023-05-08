@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Month, MonthNavigation, Table } from '../models/models';
+import { Month, MonthCalculation, MonthNavigation, Table } from '../models/models';
 import { MonthToNumberPipe } from '../Pipes/month-to-number.pipe';
 import { TableDataSourceService } from '../services/table-data-source.service';
 
@@ -72,13 +72,36 @@ export class MonthsComponent implements OnInit {
         isSaved:false,
       };
 
+      let calcs: MonthCalculation[] =[
+        {
+          name: 'current-savings',
+          value: '0',
+          isSaved: false,
+        },
+        {
+          name: 'current-expenditures',
+          value: '0',
+          isSaved: false,
+        },
+        {
+          name: 'current-earnings',
+          value: '0',
+          isSaved: false,
+        },
+        {
+          name: 'previous-savings',
+          value: '0',
+          isSaved: false,
+        },
+      ]
+
 
 
       let month: Month = {
         monthNumber:monthNumber,
         monthYear:monthYear,
         tables:[earningsTable,expTable],
-        calculation:[],
+        calculations:calcs,
         isSaved:false,
       };
       this.months.unshift(month);
@@ -131,7 +154,7 @@ export class MonthsComponent implements OnInit {
     this.datasource.monthNavigationObservable.next(this.monthsNavigationList);
   }
 
-  filterMonths(monthYear: string,monthNumber:string) : Month[] {
+  filterMonths(monthYear: string, monthNumber: string) : Month[] {
     let filteredData: Month[] =[];
     
     if(monthYear === 'all'){
@@ -146,16 +169,15 @@ export class MonthsComponent implements OnInit {
         // Future
       } else {
         for(let month of this.months) {
-          if(month.monthYear === monthYear && month.monthNumber === monthNumber) {
+          if(
+            month.monthYear === monthYear && 
+            month.monthNumber === monthNumber
+            ) {
               filteredData.push(month);
             }
         }
       }
     }
-
     return filteredData;
   }
-
-
-
 }

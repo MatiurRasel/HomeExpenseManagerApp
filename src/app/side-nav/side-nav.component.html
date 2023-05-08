@@ -2,9 +2,10 @@
     <ul class="nav-link">
         <li class="nav-list-item" *ngFor="let navItem of navigationList"
         (click)="newMonthNavigationClicked({monthYear: navItem.monthYear, monthNumber: navItem.monthNumber})">
-            <a href="#">
+           
+        <a href="#">
                 {{navItem.monthNumber | numberToMonth | titlecase}}
-                {{navItem.monthYear ==='all'?'All Months' : navItem.monthYear}}
+                {{navItem.monthYear ==='all' ? 'All Months' : navItem.monthYear}}
             </a>
         </li>
     </ul>

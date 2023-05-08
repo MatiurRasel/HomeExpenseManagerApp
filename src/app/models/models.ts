@@ -23,7 +23,7 @@ export class Month {
     monthNumber: string = '';
     monthYear: string = '';
     tables: Table[] = [];
-    calculation: MonthCalculation[]=[];
+    calculations: MonthCalculation[]=[];
     isSaved:boolean=false;
 }
 
