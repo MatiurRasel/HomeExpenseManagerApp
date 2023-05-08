@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Month, Table } from '../models/models';
+import { Month, MonthCalculation, MonthNavigation, Table } from '../models/models';
 import { MonthToNumberPipe } from '../Pipes/month-to-number.pipe';
 import { TableDataSourceService } from '../services/table-data-source.service';
 
@@ -11,7 +11,8 @@ import { TableDataSourceService } from '../services/table-data-source.service';
 export class MonthsComponent implements OnInit {
   months: Month[] = [];
   monthsToDisplay: Month[] = [];
-  
+  monthsNavigationList: MonthNavigation[]=[];
+
   constructor(public datasource: TableDataSourceService) {}
   
   ngOnInit(): void {
@@ -19,7 +20,15 @@ export class MonthsComponent implements OnInit {
       for(let item of res) {
         this.addMonthByNumber(item.monthYear,item.monthNumber);
       }
+      console.log(this.monthsNavigationList);
       this.monthsToDisplay = this.months;
+    });
+
+    // Will Execute whenever a Navigation is selected from Side-Nav
+    this.datasource.monthNavigationSelectedObservable.subscribe((res) => {
+      //alert('Months.component.ts -' + res.monthNumber + res.monthYear);
+      this.monthsToDisplay = this.filterMonths(res.monthYear, res.monthNumber);
+      console.log(this.monthsToDisplay);
     });
   }
 
@@ -57,11 +66,34 @@ export class MonthsComponent implements OnInit {
       };
 
       let expTable: Table = {
-        tableName:'expenditure',
+        tableName:'expenditures',
         columns:['date','name','amount'],
         rows:[],
         isSaved:false,
       };
+
+      let calcs: MonthCalculation[] =[
+        {
+          name: 'current-savings',
+          value: '0',
+          isSaved: false,
+        },
+        {
+          name: 'current-expenditures',
+          value: '0',
+          isSaved: false,
+        },
+        {
+          name: 'current-earnings',
+          value: '0',
+          isSaved: false,
+        },
+        {
+          name: 'previous-savings',
+          value: '0',
+          isSaved: false,
+        },
+      ]
 
 
 
@@ -69,16 +101,17 @@ export class MonthsComponent implements OnInit {
         monthNumber:monthNumber,
         monthYear:monthYear,
         tables:[earningsTable,expTable],
-        calculation:[],
+        calculations:calcs,
         isSaved:false,
       };
       this.months.unshift(month);
+      this.addMonthNavigation(monthYear, monthNumber);
       return true;
     }
     return false;
   }
 
-  deleteMonth(monthYear:string,monthName:string) {
+  deleteMonth(monthYear:string, monthName:string) {
     let monthNumber =  new MonthToNumberPipe().transform(monthName);
     let response = confirm('Are you sure ?');
     if(response) {
@@ -88,11 +121,63 @@ export class MonthsComponent implements OnInit {
           month.monthYear === monthYear
         ) {
           this.months.splice(index,1);
+          this.removeMonthNavigation(monthYear,monthNumber);
         }
       })
     }
   }
 
+  addMonthNavigation(monthYear: string, monthNumber: string) {
+    if(this.monthsNavigationList.length ===0) {
+      let firstMonthNavigation: MonthNavigation = {
+        monthNumber: 'all',
+        monthYear:'all',
+      };
 
+      this.monthsNavigationList.unshift(firstMonthNavigation);
+    }
+    let monthNavigation: MonthNavigation = {
+      monthNumber:monthNumber,
+      monthYear:monthYear,
+    };
+    this.monthsNavigationList.splice(1,0,monthNavigation);
+    this.datasource.monthNavigationObservable.next(this.monthsNavigationList);
 
+  }
+
+  removeMonthNavigation(monthYear: string, monthNumber: string) {
+    this.monthsNavigationList.forEach((value,index) => {
+      if(value.monthNumber === monthNumber && value.monthYear === monthYear) {
+        this.monthsNavigationList.splice(index,1);
+      }
+    });
+    this.datasource.monthNavigationObservable.next(this.monthsNavigationList);
+  }
+
+  filterMonths(monthYear: string, monthNumber: string) : Month[] {
+    let filteredData: Month[] =[];
+    
+    if(monthYear === 'all'){
+      if(monthNumber ==='all') {
+        filteredData = this.months;
+
+      } else {
+        // Future
+      }
+    } else {
+      if(monthNumber ==='all') {
+        // Future
+      } else {
+        for(let month of this.months) {
+          if(
+            month.monthYear === monthYear && 
+            month.monthNumber === monthNumber
+            ) {
+              filteredData.push(month);
+            }
+        }
+      }
+    }
+    return filteredData;
+  }
 }
